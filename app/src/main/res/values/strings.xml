@@ -2,4 +2,5 @@
     <string name="app_name">YelpSearchApplication</string>
     <string name= "technical_error">Something went wrong, please try again!</string>
   <string name="search_hint">Search your restaurant</string>
+    <string name="rating">Rating: </string>
 </resources>

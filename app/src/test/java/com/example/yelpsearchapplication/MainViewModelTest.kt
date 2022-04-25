@@ -8,18 +8,23 @@ import com.example.yelpsearchapplication.networks.RetrofitClient
 import com.example.yelpsearchapplication.networks.RetrofitService
 import com.example.yelpsearchapplication.viewmodels.MainViewModel
 import com.google.gson.Gson
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.*
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
+import org.mockito.Mockito
 import org.mockito.junit.MockitoJUnitRunner
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.doThrow
 import org.mockito.kotlin.verify
 import retrofit2.Response
+import kotlin.coroutines.CoroutineContext
 
 @ExperimentalCoroutinesApi
 @RunWith(MockitoJUnitRunner::class)
@@ -36,18 +41,22 @@ class MainViewModelTest {
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
+    private val dispatcher = TestCoroutineDispatcher()
+    private val testScope = TestCoroutineScope(dispatcher)
+
     @Before
     fun setup(){
         retrofitService = RetrofitClient.getRetrofitService()
+        Dispatchers.setMain(dispatcher)
     }
 
     @Test
     fun `getAustinRestaurantList success testing`() {
-        runBlockingTest {
+        runBlocking {
 
             val dummyResponse = Response.success(Gson().fromJson(Constant.BUSINESS_LIST_RESPONSE, BusinessSearchResponse::class.java))
 
-            doReturn(dummyResponse).`when`(retrofitService).getAustinRestaurantsList()
+            Mockito.`when`(retrofitService.getAustinRestaurantsList()).thenReturn(dummyResponse)
 
             val viewModel = MainViewModel()
 
@@ -66,12 +75,12 @@ class MainViewModelTest {
     }
 
     @Test
-    fun `getAustinRestaurantsList returns no data for categories testing`() {
-        runBlockingTest {
+    fun `getAustinRestaurantsList returns no data testing`() {
+        runBlocking {
 
             val dummyResponse = Response.success(Gson().fromJson(Constant.BUSINESS_LIST_EMPTY_RESPONSE, BusinessSearchResponse::class.java))
 
-            doReturn(dummyResponse).`when`(retrofitService).getAustinRestaurantsList()
+            Mockito.`when`(retrofitService.getAustinRestaurantsList()).thenReturn(dummyResponse)
 
             val viewModel = MainViewModel()
 
@@ -92,7 +101,7 @@ class MainViewModelTest {
 
         val exception = RuntimeException("Internet is not available.")
 
-        doThrow(exception).`when`(retrofitService.getAustinRestaurantsList())
+        Mockito.`when`(retrofitService.getAustinRestaurantsList()).doThrow(exception)
 
         val viewModel = MainViewModel()
 
@@ -106,5 +115,10 @@ class MainViewModelTest {
         verify(errorObserver).onChanged(expectedResult)
 
         viewModel.error.removeObserver(errorObserver)
+    }
+
+    @After
+    fun tearDown(){
+        Dispatchers.resetMain()
     }
 }

@@ -8,8 +8,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class RetrofitClient {
-    companion object {
+object RetrofitClient {
         fun getRetrofitService(): RetrofitService {
             val interceptor = Interceptor { chain ->
                 val builder = chain.request().newBuilder()
@@ -33,5 +32,4 @@ class RetrofitClient {
                 .build()
                 .create(RetrofitService::class.java)
         }
-    }
 }

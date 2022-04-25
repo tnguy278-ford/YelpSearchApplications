@@ -42,15 +42,17 @@ object Constant {
       "latitude": 37.767413217936834,
       "longitude": -122.42820739746094
     }
-  }"""
+  }}"""
 
     const val BUSINESS_LIST_EMPTY_RESPONSE = """{
-  "total": 8228,
+  "total": 0,
   "businesses": [],
   "region": {
     "center": {
       "latitude": 37.767413217936834,
       "longitude": -122.42820739746094
+    }
+    }
     }
   """
 

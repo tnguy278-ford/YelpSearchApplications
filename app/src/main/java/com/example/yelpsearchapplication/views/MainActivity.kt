@@ -15,8 +15,8 @@ import com.example.yelpsearchapplication.viewmodels.MainViewModel
 import com.example.yelpsearchapplication.views.adapters.RestaurantItemAdapter
 
 class MainActivity : AppCompatActivity() {
-    lateinit var mainBinding: ActivityMainBinding
-    lateinit var mainViewModel: MainViewModel
+    private lateinit var mainBinding: ActivityMainBinding
+    private lateinit var mainViewModel: MainViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupViewModel(){
-        mainViewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+        mainViewModel = ViewModelProvider(this)[MainViewModel::class.java]
     }
 
     private fun setupObserver() {

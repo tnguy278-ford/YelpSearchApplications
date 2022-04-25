@@ -1,17 +1,19 @@
 package com.example.yelpsearchapplication.views
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import com.example.yelpsearchapplication.R
 import com.example.yelpsearchapplication.configs.KeyConfig
 import com.example.yelpsearchapplication.databinding.ActivityRestaurantDetailsBinding
 import com.example.yelpsearchapplication.viewmodels.RestaurantDetailsViewModel
 import com.squareup.picasso.Picasso
 
 class RestaurantDetailsActivity : AppCompatActivity() {
-    lateinit var activityRestaurantDetailsBinding: ActivityRestaurantDetailsBinding
-    lateinit var viewModel: RestaurantDetailsViewModel
+    private lateinit var activityRestaurantDetailsBinding: ActivityRestaurantDetailsBinding
+    private lateinit var viewModel: RestaurantDetailsViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         activityRestaurantDetailsBinding = ActivityRestaurantDetailsBinding.inflate(layoutInflater)
@@ -23,9 +25,10 @@ class RestaurantDetailsActivity : AppCompatActivity() {
     }
 
     private fun setupViewModel() {
-        viewModel = ViewModelProvider(this).get(RestaurantDetailsViewModel::class.java)
+        viewModel = ViewModelProvider(this)[RestaurantDetailsViewModel::class.java]
     }
 
+    @SuppressLint("SetTextI18n")
     private fun setupObserver() {
         viewModel.restaurantDetailsLiveData.observe(this) { business ->
             Picasso.get()
@@ -34,7 +37,7 @@ class RestaurantDetailsActivity : AppCompatActivity() {
                 .into(activityRestaurantDetailsBinding.restaurantDetailsImageIv)
 
             activityRestaurantDetailsBinding.restaurantDetailsNameTv.text = business.name
-            activityRestaurantDetailsBinding.restaurantDetailsRatingTv.text = "Rating: ${business.rating}"
+            activityRestaurantDetailsBinding.restaurantDetailsRatingTv.text = "${getString(R.string.rating)} ${business.rating}"
             var stringCategories = "Categories: "
             for (category in business.categories) {
                 stringCategories += " ${category.title}"

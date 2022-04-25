@@ -1,5 +1,6 @@
 package com.example.yelpsearchapplication.views.adapters
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
@@ -9,15 +10,16 @@ import com.example.yelpsearchapplication.databinding.HolderRestaurantItemAdapter
 import com.example.yelpsearchapplication.models.Business
 import com.squareup.picasso.Picasso
 
-class RestaurantItemAdapter(var restaurantList: List<Business>): RecyclerView.Adapter<RestaurantItemAdapter.RestaurantItemViewHolder>() {
+class RestaurantItemAdapter(private var restaurantList: List<Business>): RecyclerView.Adapter<RestaurantItemAdapter.RestaurantItemViewHolder>() {
     inner class RestaurantItemViewHolder(var binding: HolderRestaurantItemAdapterBinding): RecyclerView.ViewHolder(binding.root) {
+        @SuppressLint("SetTextI18n")
         fun bind(business: Business) {
             binding.business = business
             Picasso.get()
                 .load(business.image_url)
                 .fit()
                 .into(binding.holderRestaurantImageIv)
-            binding.holderRestaurantRatingTv.text = "Rating: ${business.rating}"
+            binding.holderRestaurantRatingTv.text = "${binding.root.context.getText(R.string.rating)} ${business.rating}"
         }
     }
 
