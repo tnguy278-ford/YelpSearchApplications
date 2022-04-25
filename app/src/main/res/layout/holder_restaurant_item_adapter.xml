@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable
+            name="business"
+            type="com.example.yelpsearchapplication.models.Business" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/holder_restaurant_image_iv"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
+        <TextView
+            android:id="@+id/holder_restaurant_name_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{business.name}"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@id/holder_restaurant_image_iv" />
+        <TextView
+            android:id="@+id/holder_restaurant_rating_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@id/holder_restaurant_image_iv"
+            app:layout_constraintTop_toBottomOf="@id/holder_restaurant_name_tv"
+            app:layout_constraintBottom_toBottomOf="@id/holder_restaurant_image_iv"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
