@@ -350,5 +350,5 @@ object Constant {
         "phone": "+15126531187",
         "display_phone": "(512) 653-1187",
         "review_count": 5306,
-        "categories": []"""
+        "categories": []}"""
 }

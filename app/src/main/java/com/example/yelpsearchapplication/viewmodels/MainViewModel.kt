@@ -4,23 +4,23 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.yelpsearchapplication.models.Business
-import com.example.yelpsearchapplication.networks.RetrofitClient
+import com.example.yelpsearchapplication.repositories.BusinessRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class MainViewModel: ViewModel() {
+class MainViewModel(
+    private val businessRepository: BusinessRepository
+    ): ViewModel() {
     val austinRestaurantsList = MutableLiveData<List<Business>>()
 
     val error = MutableLiveData<String>()
 
     val searchEditTextLiveData = MutableLiveData<String>()
 
-    private val retrofitClient = RetrofitClient.getRetrofitService()
-
     fun getAustinRestaurantsList() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val response = retrofitClient.getAustinRestaurantsList()
+                val response = businessRepository.getAustinRestaurantsList()
                 if (response.isSuccessful) {
                     response.body()?.let { businessSearchResponse ->
                         austinRestaurantsList.postValue(businessSearchResponse.businesses)
@@ -29,7 +29,7 @@ class MainViewModel: ViewModel() {
                     error.postValue("Something went wrong, please try again.")
                 }
             } catch (e: Exception) {
-                error.postValue(e.message)
+                error.postValue(e.message.toString())
             }
         }
     }
@@ -38,7 +38,7 @@ class MainViewModel: ViewModel() {
         val updateList = ArrayList<Business>()
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val response = retrofitClient.getAustinRestaurantsList()
+                val response = businessRepository.getAustinRestaurantsList()
                 if (response.isSuccessful) {
                     response.body()?.let { businessSearchResponse ->
                         for (business in businessSearchResponse.businesses) {
@@ -52,7 +52,7 @@ class MainViewModel: ViewModel() {
                     error.postValue("Something went wrong, please try again.")
                 }
             } catch (e: Exception) {
-                error.postValue(e.message)
+                error.postValue(e.message.toString())
             }
         }
     }

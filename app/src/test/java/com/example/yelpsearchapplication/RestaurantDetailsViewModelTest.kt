@@ -3,13 +3,11 @@ package com.example.yelpsearchapplication
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
 import com.example.yelpsearchapplication.models.Business
-import com.example.yelpsearchapplication.networks.RetrofitClient
-import com.example.yelpsearchapplication.networks.RetrofitService
+import com.example.yelpsearchapplication.repositories.BusinessRepository
 import com.example.yelpsearchapplication.viewmodels.RestaurantDetailsViewModel
 import com.google.gson.Gson
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -24,7 +22,7 @@ import retrofit2.Response
 @RunWith(MockitoJUnitRunner::class)
 class RestaurantDetailsViewModelTest {
     @Mock
-    lateinit var retrofitService: RetrofitService
+    lateinit var businessRepository: BusinessRepository
 
     @Mock
     lateinit var businessObserver: Observer<Business>
@@ -35,26 +33,21 @@ class RestaurantDetailsViewModelTest {
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
-    @Before
-    fun setup(){
-        retrofitService = RetrofitClient.getRetrofitService()
-    }
-
     @Test
     fun `getRestaurantDetails success testing`() {
         runBlockingTest {
 
             val dummyResponse = Response.success(Gson().fromJson(Constant.BUSINESS_DETAILS_RESPONSE, Business::class.java))
 
-            doReturn(dummyResponse).`when`(retrofitService).getRestaurantDetail(TEST_ID)
+            doReturn(dummyResponse).`when`(businessRepository).getRestaurantDetails(TEST_ID)
 
-            val viewModel = RestaurantDetailsViewModel()
+            val viewModel = RestaurantDetailsViewModel(businessRepository)
 
             viewModel.restaurantDetailsLiveData.observeForever(businessObserver)
 
             viewModel.getRestaurantDetails(TEST_ID)
 
-            verify(retrofitService).getRestaurantDetail(TEST_ID)
+            verify(businessRepository).getRestaurantDetails(TEST_ID)
 
             val expectedResult = Gson().fromJson(Constant.BUSINESS_DETAILS_RESPONSE, Business::class.java)
 
@@ -70,17 +63,19 @@ class RestaurantDetailsViewModelTest {
 
             val dummyResponse = Response.success(Gson().fromJson(Constant.BUSINESS_DETAILS_EMPTY_RESPONSE, Business::class.java))
 
-            doReturn(dummyResponse).`when`(retrofitService).getRestaurantDetail(TEST_ID)
+            doReturn(dummyResponse).`when`(businessRepository).getRestaurantDetails(TEST_ID)
 
-            val viewModel = RestaurantDetailsViewModel()
+            val viewModel = RestaurantDetailsViewModel(businessRepository)
 
-            viewModel.error.observeForever(errorObserver)
+            viewModel.restaurantDetailsLiveData.observeForever(businessObserver)
 
             viewModel.getRestaurantDetails(TEST_ID)
 
-            verify(retrofitService).getRestaurantDetail(TEST_ID)
+            val expectedResult = Gson().fromJson(Constant.BUSINESS_DETAILS_EMPTY_RESPONSE, Business::class.java)
 
-            verify(errorObserver).onChanged("Failed to load Restaurant data")
+            verify(businessRepository).getRestaurantDetails(TEST_ID)
+
+            verify(businessObserver).onChanged(expectedResult)
 
             viewModel.error.removeObserver(errorObserver)
         }
@@ -91,15 +86,15 @@ class RestaurantDetailsViewModelTest {
 
         val exception = RuntimeException("Internet is not available.")
 
-        doThrow(exception).`when`(retrofitService.getRestaurantDetail(TEST_ID))
+        doThrow(exception).`when`(businessRepository.getRestaurantDetails(TEST_ID))
 
-        val viewModel = RestaurantDetailsViewModel()
+        val viewModel = RestaurantDetailsViewModel(businessRepository)
 
         viewModel.error.observeForever(errorObserver)
 
         viewModel.getRestaurantDetails(TEST_ID)
 
-        verify(retrofitService).getRestaurantDetail(TEST_ID)
+        verify(businessRepository).getRestaurantDetails(TEST_ID)
 
         val expectedResult = "Error is : $exception"
         verify(errorObserver).onChanged(expectedResult)

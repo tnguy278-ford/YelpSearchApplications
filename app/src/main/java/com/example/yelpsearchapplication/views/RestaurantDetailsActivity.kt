@@ -8,12 +8,16 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.yelpsearchapplication.R
 import com.example.yelpsearchapplication.configs.KeyConfig
 import com.example.yelpsearchapplication.databinding.ActivityRestaurantDetailsBinding
+import com.example.yelpsearchapplication.repositories.BusinessRepository
 import com.example.yelpsearchapplication.viewmodels.RestaurantDetailsViewModel
+import com.example.yelpsearchapplication.viewmodels.factories.RestaurantDetailsViewModelFactory
 import com.squareup.picasso.Picasso
 
 class RestaurantDetailsActivity : AppCompatActivity() {
     private lateinit var activityRestaurantDetailsBinding: ActivityRestaurantDetailsBinding
     private lateinit var viewModel: RestaurantDetailsViewModel
+    private lateinit var businessRepository: BusinessRepository
+    private lateinit var viewModelViewModelFactory: RestaurantDetailsViewModelFactory
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         activityRestaurantDetailsBinding = ActivityRestaurantDetailsBinding.inflate(layoutInflater)
@@ -25,7 +29,9 @@ class RestaurantDetailsActivity : AppCompatActivity() {
     }
 
     private fun setupViewModel() {
-        viewModel = ViewModelProvider(this)[RestaurantDetailsViewModel::class.java]
+        businessRepository = BusinessRepository()
+        viewModelViewModelFactory = RestaurantDetailsViewModelFactory(businessRepository)
+        viewModel = ViewModelProvider(this, viewModelViewModelFactory)[RestaurantDetailsViewModel::class.java]
     }
 
     @SuppressLint("SetTextI18n")

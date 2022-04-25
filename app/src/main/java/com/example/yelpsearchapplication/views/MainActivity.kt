@@ -11,12 +11,16 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.yelpsearchapplication.R
 import com.example.yelpsearchapplication.configs.KeyConfig
 import com.example.yelpsearchapplication.databinding.ActivityMainBinding
+import com.example.yelpsearchapplication.repositories.BusinessRepository
 import com.example.yelpsearchapplication.viewmodels.MainViewModel
+import com.example.yelpsearchapplication.viewmodels.factories.MainViewModelFactory
 import com.example.yelpsearchapplication.views.adapters.RestaurantItemAdapter
 
 class MainActivity : AppCompatActivity() {
     private lateinit var mainBinding: ActivityMainBinding
     private lateinit var mainViewModel: MainViewModel
+    private lateinit var mainViewModelFactory: MainViewModelFactory
+    private lateinit var businessRepository: BusinessRepository
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
@@ -27,7 +31,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupViewModel(){
-        mainViewModel = ViewModelProvider(this)[MainViewModel::class.java]
+        businessRepository = BusinessRepository()
+        mainViewModelFactory = MainViewModelFactory(businessRepository)
+        mainViewModel = ViewModelProvider(this, mainViewModelFactory)[MainViewModel::class.java]
     }
 
     private fun setupObserver() {
